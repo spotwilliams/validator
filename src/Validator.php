@@ -50,6 +50,14 @@ class Validator
         return true;
     }
 
+    /**
+     * Register a validation rule with a given name.
+     *
+     * @param string $name The name to associate with the validation rule.
+     * @param string|ValidationRule $rule The validation rule to register. This can be either a string representing the name of a built-in rule or an instance of a custom ValidationRule class.
+     *
+     * @return self Returns an instance of the current object, allowing for method chaining.
+     */
     public function registerRule(string $name, string|ValidationRule $rule): self
     {
         $this->rules[$name] = $rule;
@@ -77,5 +85,4 @@ class Validator
         }
         throw new \Exception('validation rule not found');
     }
-
 }
