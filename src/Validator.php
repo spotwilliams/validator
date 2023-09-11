@@ -10,15 +10,12 @@ use Spotwilliams\Validator\Exceptions\ValidationFailed;
 
 class Validator
 {
-    private array $rules = [
-        'datetime_iso' => Rules\DateTimeIso::class,
-        'later_than_datetime_iso' => Rules\DateTimeIsoLaterThan::class,
-        'hex_color' => Rules\HexColor::class,
-        'in' => Rules\In::class,
-        'nullable' => Rules\Nullable::class,
-        'required' => Rules\Required::class,
-        'string_length' => Rules\StringLength::class,
-    ];
+    private array $rules = [];
+
+    public function __construct()
+    {
+        $this->rules = (include __DIR__  .'/config/validator.php')['rules'];
+    }
 
     /**
      * Validates the given values using the specified rules.
@@ -53,6 +50,13 @@ class Validator
         return true;
     }
 
+    public function registerRule(string $name, string|ValidationRule $rule): self
+    {
+        $this->rules[$name] = $rule;
+
+        return $this;
+    }
+
     /**
      * Finds and returns the validation rule with the specified name.
      *
@@ -63,7 +67,13 @@ class Validator
     private function findRule(string $name): ValidationRule
     {
         if (isset($this->rules[$name])) {
-            return new  $this->rules[$name]();
+            $rule = is_string($this->rules[$name]) ?
+                // if class name is provided, instantiate
+                new $this->rules[$name]() :
+                // if not return the callable/object
+                $this->rules[$name];
+
+            return $rule;
         }
         throw new \Exception('validation rule not found');
     }

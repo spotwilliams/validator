@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use Spotwilliams\Validator\Contracts\ValidationRule;
 use Spotwilliams\Validator\Exceptions\ValidationFailed;
 
 class ValidatorTests extends TestCase
@@ -13,11 +14,8 @@ class ValidatorTests extends TestCase
         $rules = [
             'field_1' => ['required']
         ];
-        $values = [
-            'field_1' => 'value'
-        ];
 
-        $result = $this->validator->validate(values: $values, rules: $rules);
+        $result = $this->validator->validate(values: ['field_1' => 'value'], rules: $rules);
 
         self::assertTrue($result);
 
@@ -33,20 +31,20 @@ class ValidatorTests extends TestCase
         ];
 
         try {
-            $this->validator->validate(values: [ 'field_1' => null], rules: $rules);
+            $this->validator->validate(values: ['field_1' => null], rules: $rules);
         } catch (ValidationFailed $e) {
             self::assertEquals('The field `field_1` is required.', $e->getMessage());
             self::assertInstanceOf(ValidationFailed::class, $e);
         }
 
         try {
-            $this->validator->validate(values: [ 'field_1' => 'bad value'], rules: $rules);
+            $this->validator->validate(values: ['field_1' => 'bad value'], rules: $rules);
         } catch (ValidationFailed $e) {
             self::assertEquals('The value for field `field_1` is not in the required list: value,another value', $e->getMessage());
             self::assertInstanceOf(ValidationFailed::class, $e);
         }
 
-        $result = $this->validator->validate(values: [ 'field_1' => 'value'], rules: $rules);
+        $result = $this->validator->validate(values: ['field_1' => 'value'], rules: $rules);
 
         self::assertTrue($result);
     }
@@ -64,9 +62,33 @@ class ValidatorTests extends TestCase
         self::assertTrue($result);
 
         try {
-            $this->validator->validate(values: [ 'field_1' => 'bad value'], rules: $rules);
+            $this->validator->validate(values: ['field_1' => 'bad value'], rules: $rules);
         } catch (ValidationFailed $e) {
             self::assertEquals('The value for field `field_1` is not in the required list: value,another value', $e->getMessage());
+            self::assertInstanceOf(ValidationFailed::class, $e);
+        }
+    }
+
+
+    public function test_can_add_new_rule_dynamically()
+    {
+        $rules = ['field_1' => ['is_phi']];
+
+        $this->validator->registerRule('is_phi', new class implements ValidationRule {
+            public function apply(string $ruleName, string $field, mixed $value = null, $constraint = null): bool
+            {
+                if ($value === 3.14) {
+                    return true;
+                }
+                throw new ValidationFailed("The value for field `{$field}` is not Phi (3.15), you provided: {$value}.");
+            }
+        });
+
+
+        try {
+            $this->validator->validate(values: ['field_1' => 3.15], rules: $rules);
+        } catch (ValidationFailed $e) {
+            self::assertEquals('The value for field `field_1` is not Phi (3.15), you provided: 3.15.', $e->getMessage());
             self::assertInstanceOf(ValidationFailed::class, $e);
         }
     }
