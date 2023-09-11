@@ -1,0 +1,25 @@
+{
+    "name": "spotwilliams/validator",
+    "description": "A simple input validator created just for fun",
+    "type": "project",
+    "require-dev": {
+        "phpunit/phpunit": "^10.3",
+        "friendsofphp/php-cs-fixer": "^3.26"
+    },
+    "autoload": {
+        "psr-4": {
+            "Spotwilliams\\Validator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ricardo Vergara",
+            "email": "ricardovergarawork@gmail.com"
+        }
+    ]
+}
