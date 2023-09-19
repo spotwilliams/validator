@@ -46,6 +46,7 @@ class Validator
                 }
             }
         }
+        
 
         return true;
     }
@@ -83,6 +84,7 @@ class Validator
 
             return $rule;
         }
+
         throw new \Exception('validation rule not found');
     }
 }
