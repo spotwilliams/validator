@@ -95,44 +95,38 @@ class ValidatorTests extends TestCase
 
     public function test_validate_on_empty_string_values()
     {
+        self::expectException(ValidationFailed::class);
+        self::expectExceptionMessage('The field `field_1` is required.');
+
         $rules = [
             'field_1' => ['required'],
         ];
 
-        try {
-            $result = $this->validator->validate(values: ['field_1' => ""], rules: $rules);
-        } catch (ValidationFailed $e) {
-            self::assertEquals('The field `field_1` is required.', $e->getMessage());
-            self::assertInstanceOf(ValidationFailed::class, $e);
-        }
+        $result = $this->validator->validate(values: ['field_1' => ""], rules: $rules);
     }
 
     public function test_validate_with_double_space_string_values()
     {
+        self::expectException(ValidationFailed::class);
+        self::expectExceptionMessage('The field `field_1` is required.');
+
         $rules = [
             'field_1' => ['required'],
         ];
 
-        try {
-            $result = $this->validator->validate(values: ['field_1' => " "], rules: $rules);
-        } catch (ValidationFailed $e) {
-            self::assertEquals('The field `field_1` is required.', $e->getMessage());
-            self::assertInstanceOf(ValidationFailed::class, $e);
-        }
+        $result = $this->validator->validate(values: ['field_1' => " "], rules: $rules);
     }
 
     public function test_validate_with_empty_array_values()
     {
+        self::expectException(ValidationFailed::class);
+        self::expectExceptionMessage('The field `field_1` is required.');
+
         $rules = [
             'field_1' => ['required'],
         ];
 
-        try {
-            $result = $this->validator->validate(values: ['field_1' => []], rules: $rules);
-        } catch (ValidationFailed $e) {
-            self::assertEquals('The field `field_1` is required.', $e->getMessage());
-            self::assertInstanceOf(ValidationFailed::class, $e);
-        }
+        $result = $this->validator->validate(values: ['field_1' => []], rules: $rules);
     }
 
     public function test_validate_between_field()
@@ -152,58 +146,49 @@ class ValidatorTests extends TestCase
 
     public function test_validate_between_with_empty_constraints_field()
     {
+        self::expectException(ValidationFailed::class);
+        self::expectExceptionMessage('The field `field_1` validation requires a min & max constraint.');
+
         $rules = [
             'field_1' => ['between']
         ];
 
-        try {
-            $result = $this->validator->validate(values: ['field_1' => 4], rules: $rules);
-        } catch (ValidationFailed $e) {
-            self::assertEquals('The field `field_1` validation requires a min & max constraint.', $e->getMessage());
-            self::assertInstanceOf(ValidationFailed::class, $e);
-        }
+        $result = $this->validator->validate(values: ['field_1' => 4], rules: $rules);
     }
 
     public function test_validate_between_with_empty_array_constraints_field()
     {
+        self::expectException(ValidationFailed::class);
+        self::expectExceptionMessage('The field `field_1` validation requires a min & max constraint.');
+
         $rules = [
             'field_1' => ['between' => []]
         ];
 
-        try {
-            $result = $this->validator->validate(values: ['field_1' => 4], rules: $rules);
-        } catch (ValidationFailed $e) {
-            self::assertEquals('The field `field_1` validation requires a min & max constraint.', $e->getMessage());
-            self::assertInstanceOf(ValidationFailed::class, $e);
-        }
+        $result = $this->validator->validate(values: ['field_1' => 4], rules: $rules);
     }
 
     public function test_validate_between_with_only_min_constraints_field()
     {
+        self::expectException(ValidationFailed::class);
+        self::expectExceptionMessage('The field `field_1` validation requires a min & max constraint.');
         $rules = [
             'field_1' => ['between' => [ "min" => 3]]
         ];
 
-        try {
-            $result = $this->validator->validate(values: ['field_1' => 4], rules: $rules);
-        } catch (ValidationFailed $e) {
-            self::assertEquals('The field `field_1` validation requires a min & max constraint.', $e->getMessage());
-            self::assertInstanceOf(ValidationFailed::class, $e);
-        }
+        $result = $this->validator->validate(values: ['field_1' => 4], rules: $rules);
     }
 
     public function test_validate_between_with_only_max_constraints_field()
     {
+        self::expectException(ValidationFailed::class);
+        self::expectExceptionMessage('The field `field_1` validation requires a min & max constraint.');
+
         $rules = [
             'field_1' => ['between' => [ "max" => 3]]
         ];
 
-        try {
-            $result = $this->validator->validate(values: ['field_1' => 4], rules: $rules);
-        } catch (ValidationFailed $e) {
-            self::assertEquals('The field `field_1` validation requires a min & max constraint.', $e->getMessage());
-            self::assertInstanceOf(ValidationFailed::class, $e);
-        }
+        $result = $this->validator->validate(values: ['field_1' => 4], rules: $rules);
     }
 
     public function test_validate_between_with_string_constraints_field()
@@ -219,15 +204,15 @@ class ValidatorTests extends TestCase
 
     public function test_validate_between_with_non_numeric_constraints_field()
     {
+
+        self::expectException(ValidationFailed::class);
+        self::expectExceptionMessage('The validation min & max required numeric value, `av` & `bc` given.');
+
+
         $rules = [
             'field_1' => ['between' => [ "min" => "av", "max" => "bc"]]
         ];
 
-        try {
-            $result = $this->validator->validate(values: ['field_1' => 4], rules: $rules);
-        } catch (ValidationFailed $e) {
-            self::assertEquals('The validation min & max required numeric value, `av` & `bc` given.', $e->getMessage());
-            self::assertInstanceOf(ValidationFailed::class, $e);
-        }
+        $result = $this->validator->validate(values: ['field_1' => 4], rules: $rules);
     }
 }
